@@ -26,8 +26,8 @@ jobs:
             cache: "yarn"
 
       # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
+      - name: setup vue-cli
+        run: yarn global add @vue/cli
       
       - name: build
         run: yarn build
