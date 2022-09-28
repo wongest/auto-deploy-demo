@@ -34,4 +34,9 @@ jobs:
 
       # Runs a set of commands using the runners shell
       - name: log file
-        run: ls
+        run: tree ./dist
+
+      - name: set docker
+        run: docker/setup-buildx-action@v2
+      - name: test docker
+        run: docker --help
