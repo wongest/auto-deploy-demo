@@ -22,29 +22,32 @@ jobs:
       - name: log branch_name
         run: echo $GITHUB_REF
 
-      - name: Set up docker git
-        uses: docker/setup-qemu-action@v2
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+      # - name: Set up docker git
+      #   uses: docker/setup-qemu-action@v2
+      # - name: Set up Docker Buildx
+      #   uses: docker/setup-buildx-action@v2
       
-      - name: setup node
-        uses: actions/setup-node@v2-beta
-        with: 
-            node-version: '14.17'
-            cache: "yarn"
+      # - name: setup node
+      #   uses: actions/setup-node@v2-beta
+      #   with: 
+      #       node-version: '14.17'
+      #       cache: "yarn"
 
-      # Runs a single command using the runners shell
-      - name: yarn install
-        run: yarn install
+      # # Runs a single command using the runners shell
+      # - name: yarn install
+      #   run: yarn install
       
-      - name: build
-        run: yarn build
+      # - name: build
+      #   run: yarn build
 
-      # Runs a set of commands using the runners shell
-      - name: log file
-        run: tree ./dist
+      # # Runs a set of commands using the runners shell
+      # - name: log file
+      #   run: tree ./dist
 
-      
+      - name: set tag name
+        run: tag=$GITHUB_REF | awk -F '/' '{print $NF}'
+      - name: log tagname
+        run: echo $tagname
 
-      - name: docker build
-        run: docker build . -t 
+      # - name: docker build
+      #   run: docker build . -t 
