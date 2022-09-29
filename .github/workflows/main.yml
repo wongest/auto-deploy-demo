@@ -55,8 +55,11 @@ jobs:
         id: extract_branch_commit
 
       - name: set-output tagName
-        run: echo ${{ steps.extract_branch_commit.outputs.branch }} ${{steps.extract_branch_commit.outputs.commit_id}}
-        id: tagName
+        run: echo "##[set-output name=tagName;]$(echo ${{ steps.extract_branch_commit.outputs.branch }}:${{steps.extract_branch_commit.outputs.commit_id}})"
+        id: extract_tag
+
+      - name: log tag
+        run: echo ${{steps.extract_tag.outputs.tagName}}
 
       # - name: docker build
       #   run: docker build . -t 
