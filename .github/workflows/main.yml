@@ -62,7 +62,7 @@ jobs:
       - name: log imageid
         run: |
           echo ${DOCKER_IMAGE_NAME}
-          echo ${{ steps.docker_image.outputs.image_id }}
+        #   echo ${{ steps.docker_image.outputs.image_id }}
 
       # - name: docker image make tag
       #   env: 
