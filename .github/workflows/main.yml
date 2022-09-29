@@ -51,7 +51,7 @@ jobs:
         #   echo “##[set-output name=commit;]$(echo "555555")”
         run: |
           echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/}  | awk -F '/' '{print $NF}')" 
-          echo "##[set-output name=commit_id;]$(echo '6666')"
+          echo "##[set-output name=commit_id;]$(echo ${git rev-parse --short '$GITHUB_SHA'})"
         id: extract_branch_commit
 
       - name: set-output tagName
