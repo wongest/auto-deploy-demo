@@ -24,20 +24,20 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
       
-      - name: Set up node
-        uses: actions/setup-node@v2-beta
-        with: 
-            node-version: '14.17'
-            cache: "yarn"
+      # - name: Set up node
+      #   uses: actions/setup-node@v2-beta
+      #   with: 
+      #       node-version: '14.17'
+      #       cache: "yarn"
 
-      - name: yarn install
-        run: yarn install
+      # - name: yarn install
+      #   run: yarn install
       
-      - name: yarn build
-        run: yarn build
+      # - name: yarn build
+      #   run: yarn build
 
-      - name: log dist file
-        run: tree ./dist
+      # - name: log dist file
+      #   run: tree ./dist
 
       - name: set-output branch name
         shell: bash
@@ -48,31 +48,28 @@ jobs:
 
       - name: docker build
         env:
-          DOCKER_IMAGE_NAME: "${{ steps.extract_branch_commit.outputs.branch }}:${{steps.extract_branch_commit.outputs.commit_id}}"
+          DOCKER_IMAGE_NAME: ${{ steps.extract_branch_commit.outputs.branch }}:${{steps.extract_branch_commit.outputs.commit_id}}
         run: docker build . -t ${DOCKER_IMAGE_NAME}
 
-      - name: set-output image id
-        run: echo "##[set-output name=image_id;]$(echo $(docker images -q --filter reference=${DOCKER_IMAGE_NAME}))"
-        id: docker_image
 
-      - name: login aliyun docker
-        env:
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_REGISTRY: registry.cn-hangzhou.aliyuncs.com
-        run: echo "${DOCKER_PASSWORD}" | docker login --username ${DOCKER_USERNAME} --password-stdin ${DOCKER_REGISTRY}
+      # - name: login aliyun docker
+      #   env:
+      #     DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      #     DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      #     DOCKER_REGISTRY: registry.cn-hangzhou.aliyuncs.com
+      #   run: echo "${DOCKER_PASSWORD}" | docker login --username ${DOCKER_USERNAME} --password-stdin ${DOCKER_REGISTRY}
 
       - name: log imageid
         run: |
           echo ${DOCKER_IMAGE_NAME}
           echo ${{ steps.docker_image.outputs.image_id }}
 
-      - name: docker image make tag
-        env: 
-          DOCKER_TAG: ${DOCKER_REGISTRY}/${DOCKER_IMAGE_NAME}
-        run: docker tag ${{ steps.docker_image.outputs.image_id }} ${DOCKER_TAG}
+      # - name: docker image make tag
+      #   env: 
+      #     DOCKER_TAG: ${DOCKER_REGISTRY}/${DOCKER_IMAGE_NAME}
+      #   run: docker tag ${{ steps.docker_image.outputs.image_id }} ${DOCKER_TAG}
 
-      - name: docker push
-        run: docker push ${DOCKER_TAG}
+      # - name: docker push
+      #   run: docker push ${DOCKER_TAG}
 
 
