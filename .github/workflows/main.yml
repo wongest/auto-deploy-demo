@@ -64,4 +64,4 @@ jobs:
       #   run: echo ${{ steps.docker_image.outputs.image_id }}
 
       - name: login aliyun docker
-        run: echo ${{ secrets.SuperSecret }} | docker login --username=johnnywongmc --password-stdin registry.cn-hangzhou.aliyuncs.com
+        run: echo "${{ secrets.SuperSecret }}" | docker login --username=johnnywongmc --password-stdin registry.cn-hangzhou.aliyuncs.com
