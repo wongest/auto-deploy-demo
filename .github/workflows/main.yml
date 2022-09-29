@@ -24,7 +24,7 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
       
-      - name: setup node
+      - name: Set up node
         uses: actions/setup-node@v2-beta
         with: 
             node-version: '14.17'
@@ -36,13 +36,13 @@ jobs:
       - name: yarn install
         run: yarn install
       
-      - name: build
+      - name: yarn build
         run: yarn build
 
       - name: log dist file
         run: tree ./dist
 
-      - name: Extract branch name
+      - name: set-output branch name
         shell: bash
         run: |
           echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/}  | awk -F '/' '{print $NF}')" 
@@ -57,7 +57,7 @@ jobs:
         run: docker build . -t ${{steps.extract_tag.outputs.tagName}}
 
       - name: set-output image id
-        run: "##[set-output name=image_id;]$(echo $(docker images -q --filter ${{steps.extract_tag.outputs.tagName}}))"
+        run: "##[set-output name=image_id;]$(echo $(docker images -q --filter reference=${{steps.extract_tag.outputs.tagName}}))"
         id: docker_image
 
       - name: log image id
