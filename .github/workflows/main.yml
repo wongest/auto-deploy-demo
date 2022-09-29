@@ -63,7 +63,9 @@ jobs:
         run: echo "${DOCKER_PASSWORD}" | docker login --username ${DOCKER_USERNAME} --password-stdin ${DOCKER_REGISTRY}
 
       - name: log imageid
-        run: echo ${{ steps.docker_image.outputs.image_id }}
+        run: |
+          echo $(docker images)
+          echo ${{ steps.docker_image.outputs.image_id }}
 
       - name: docker image make tag
         env: 
