@@ -44,10 +44,13 @@ jobs:
       # - name: log file
       #   run: tree ./dist
 
-      - name: set tag name
-        run: tag=$GITHUB_REF | awk -F '/' '{print $NF}'
-      - name: log tagname
-        run: echo ${{ tagname }}
+      - name: Extract branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
+
+      - name: Push to ECR
+        run: echo ${{ steps.extract_branch.outputs.branch }}
 
       # - name: docker build
       #   run: docker build . -t 
