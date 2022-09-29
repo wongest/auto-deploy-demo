@@ -46,7 +46,7 @@ jobs:
 
       - name: Extract branch name
         shell: bash
-        run: ::set-output name=branch::$(echo ${GITHUB_REF#refs/heads/})
+        run: echo "##[set-output name=branch;]$(echo "6666666")"
         id: extract_branch
 
       - name: Push to ECR
