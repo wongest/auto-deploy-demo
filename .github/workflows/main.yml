@@ -46,9 +46,12 @@ jobs:
 
       - name: Extract branch name
         shell: bash
+        # run: |
+        #   echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/}  | awk -F '/' '{print $NF}')" \
+        #   echo “##[set-output name=commit;]$(echo "555555")”
         run: |
-          echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/}  | awk -F '/' '{print $NF}')"
-          echo “##[set-output name=commit;]$(echo "555555")”
+          echo "开始进行release构建"
+          echo "开始进行release构建1111"
         id: extract_branch
 
       - name: Push to ECR
