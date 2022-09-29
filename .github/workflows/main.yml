@@ -46,7 +46,7 @@ jobs:
 
       - name: Extract branch name
         shell: bash
-        run: ｜
+        run: |
           echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/}  | awk -F '/' '{print $NF}')"
           echo “##[set-output name=commit;]$(echo "555555")”
         id: extract_branch
