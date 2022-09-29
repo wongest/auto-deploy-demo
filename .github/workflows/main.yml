@@ -51,11 +51,12 @@ jobs:
         #   echo “##[set-output name=commit;]$(echo "555555")”
         run: |
           echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/}  | awk -F '/' '{print $NF}')" 
+          echo "##[set-output name=commit_id;]$(echo '6666')"
+        id: extract_branch_commit
 
-        id: extract_branch
-
-      - name: Push to ECR
-        run: echo ${{ steps.extract_branch.outputs.branch }}
+      - name: set-output tagName
+        run: echo ${{ steps.extract_branch_commit.outputs.branch }} ${{steps.extract_branch_commit.outputs.commit_id}}
+        id: tagName
 
       # - name: docker build
       #   run: docker build . -t 
