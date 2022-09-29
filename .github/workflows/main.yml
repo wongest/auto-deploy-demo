@@ -48,7 +48,7 @@ jobs:
 
       - name: docker build
         env:
-          DOCKER_IMAGE_NAME: ${{ steps.extract_branch_commit.outputs.branch }}:${{steps.extract_branch_commit.outputs.commit_id}}
+          DOCKER_IMAGE_NAME: `${{ steps.extract_branch_commit.outputs.branch }}:${{steps.extract_branch_commit.outputs.commit_id}}`
         run: docker build . -t ${DOCKER_IMAGE_NAME}
 
 
