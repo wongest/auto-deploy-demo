@@ -61,6 +61,7 @@ jobs:
 
       - name: log imageid
         run: |
+          echo "gggg"
           echo ${{ steps.extract_branch_commit.outputs.branch }}:${{steps.extract_branch_commit.outputs.commit_id}}
           echo ${DOCKER_IMAGE_NAME}
         #   echo ${{ steps.docker_image.outputs.image_id }}
