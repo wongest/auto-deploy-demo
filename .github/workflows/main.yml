@@ -57,7 +57,7 @@ jobs:
         run: docker build . -t ${{steps.extract_tag.outputs.tagName}}
 
       - name: set-output image id
-        run: "##[set-output name=image_id;]$(echo $(docker images -q --filter reference=${{steps.extract_tag.outputs.tagName}}))"
+        run: echo "##[set-output name=image_id;]$(echo $(docker images -q --filter reference=${{steps.extract_tag.outputs.tagName}}))"
         id: docker_image
 
       - name: log image id
