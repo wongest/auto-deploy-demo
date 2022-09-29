@@ -63,7 +63,7 @@ jobs:
         run: |
           echo "gggg"
           echo ${{ steps.extract_branch_commit.outputs.branch }}:${{steps.extract_branch_commit.outputs.commit_id}}
-          echo ${DOCKER_IMAGE_NAME}
+          echo "${DOCKER_IMAGE_NAME}hhhhh"
         #   echo ${{ steps.docker_image.outputs.image_id }}
 
       # - name: docker image make tag
