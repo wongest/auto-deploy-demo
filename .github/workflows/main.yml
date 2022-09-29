@@ -30,6 +30,9 @@ jobs:
             node-version: '14.17'
             cache: "yarn"
 
+      - name: set yarn taobao
+        run: yarn config set registry https://registry.npmmirror.com/
+
       - name: yarn install
         run: yarn install
       
