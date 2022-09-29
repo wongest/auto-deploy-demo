@@ -50,9 +50,8 @@ jobs:
         #   echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/}  | awk -F '/' '{print $NF}')" \
         #   echo “##[set-output name=commit;]$(echo "555555")”
         run: |
-          echo "开始进行release构建"
           echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/}  | awk -F '/' '{print $NF}')" 
-          echo "开始进行release构建1111"
+
         id: extract_branch
 
       - name: Push to ECR
