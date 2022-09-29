@@ -19,52 +19,55 @@ jobs:
       - name: Run clone
         uses: actions/checkout@v3
 
-      # - name: Set up docker git
-      #   uses: docker/setup-qemu-action@v2
-      # - name: Set up Docker Buildx
-      #   uses: docker/setup-buildx-action@v2
+      - name: Set up docker git
+        uses: docker/setup-qemu-action@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
       
-      # - name: Set up node
-      #   uses: actions/setup-node@v2-beta
-      #   with: 
-      #       node-version: '14.17'
-      #       cache: "yarn"
+      - name: Set up node
+        uses: actions/setup-node@v2-beta
+        with: 
+            node-version: '14.17'
+            cache: "yarn"
 
-      # - name: set yarn taobao
-      #   run: yarn config set registry https://registry.npmmirror.com/
+      - name: set yarn taobao
+        run: yarn config set registry https://registry.npmmirror.com/
 
-      # - name: yarn install
-      #   run: yarn install
+      - name: yarn install
+        run: yarn install
       
-      # - name: yarn build
-      #   run: yarn build
+      - name: yarn build
+        run: yarn build
 
-      # - name: log dist file
-      #   run: tree ./dist
+      - name: log dist file
+        run: tree ./dist
 
-      # - name: set-output branch name
-      #   shell: bash
-      #   run: |
-      #     echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/}  | awk -F '/' '{print $NF}')" 
-      #     echo "##[set-output name=commit_id;]$(echo $(git rev-parse --short ${GITHUB_SHA}))"
-      #   id: extract_branch_commit
+      - name: set-output branch name
+        shell: bash
+        run: |
+          echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/}  | awk -F '/' '{print $NF}')" 
+          echo "##[set-output name=commit_id;]$(echo $(git rev-parse --short ${GITHUB_SHA}))"
+        id: extract_branch_commit
 
-      # - name: set-output tagName
-      #   run: echo "##[set-output name=tagName;]$(echo ${{ steps.extract_branch_commit.outputs.branch }}:${{steps.extract_branch_commit.outputs.commit_id}})"
-      #   id: extract_tag
+      - name: set-output tagName
+        run: echo "##[set-output name=tagName;]$(echo ${{ steps.extract_branch_commit.outputs.branch }}:${{steps.extract_branch_commit.outputs.commit_id}})"
+        id: extract_tag
 
-      # - name: docker build
-      #   run: docker build . -t ${{steps.extract_tag.outputs.tagName}}
+      - name: docker build
+        run: docker build . -t ${{steps.extract_tag.outputs.tagName}}
 
-      # - name: set-output image id
-      #   run: echo "##[set-output name=image_id;]$(echo $(docker images -q --filter reference=${{steps.extract_tag.outputs.tagName}}))"
-      #   id: docker_image
+      - name: set-output image id
+        run: echo "##[set-output name=image_id;]$(echo $(docker images -q --filter reference=${{steps.extract_tag.outputs.tagName}}))"
+        id: docker_image
 
-      # - name: docker image tag
-      #   run: echo ${{ steps.docker_image.outputs.image_id }}
+      - name: docker image tag
+        run: echo ${{ steps.docker_image.outputs.image_id }}
 
       - name: login aliyun docker
         env:
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-        run: echo "${DOCKER_PASSWORD}" | docker login --username ${DOCKER_USERNAME} --password-stdin registry.cn-hangzhou.aliyuncs.com
+          DOCKER_REGISTRY: registry.cn-hangzhou.aliyuncs.com
+        run: echo "${DOCKER_PASSWORD}" | docker login --username ${DOCKER_USERNAME} --password-stdin ${DOCKER_REGISTRY}
+
+
