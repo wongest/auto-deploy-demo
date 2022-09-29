@@ -72,7 +72,6 @@ jobs:
       #   run: echo "${DOCKER_PASSWORD}" | docker login --username ${DOCKER_USERNAME} --password-stdin ${DOCKER_REGISTRY}
 
       - name: log imageid
-        need: 
         run: |
           echo "gggg"
           echo ${{ steps.extract_branch_commit.outputs.branch }}:${{steps.extract_branch_commit.outputs.commit_id}}
