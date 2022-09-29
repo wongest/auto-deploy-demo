@@ -19,36 +19,28 @@ jobs:
       - name: Run clone
         uses: actions/checkout@v3
 
-      - name: log branch_name
-        run: echo $GITHUB_REF
-
-      # - name: Set up docker git
-      #   uses: docker/setup-qemu-action@v2
-      # - name: Set up Docker Buildx
-      #   uses: docker/setup-buildx-action@v2
+      - name: Set up docker git
+        uses: docker/setup-qemu-action@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
       
-      # - name: setup node
-      #   uses: actions/setup-node@v2-beta
-      #   with: 
-      #       node-version: '14.17'
-      #       cache: "yarn"
+      - name: setup node
+        uses: actions/setup-node@v2-beta
+        with: 
+            node-version: '14.17'
+            cache: "yarn"
 
-      # # Runs a single command using the runners shell
-      # - name: yarn install
-      #   run: yarn install
+      - name: yarn install
+        run: yarn install
       
-      # - name: build
-      #   run: yarn build
+      - name: build
+        run: yarn build
 
-      # # Runs a set of commands using the runners shell
-      # - name: log file
-      #   run: tree ./dist
+      - name: log dist file
+        run: tree ./dist
 
       - name: Extract branch name
         shell: bash
-        # run: |
-        #   echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/}  | awk -F '/' '{print $NF}')" \
-        #   echo “##[set-output name=commit;]$(echo "555555")”
         run: |
           echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/}  | awk -F '/' '{print $NF}')" 
           echo "##[set-output name=commit_id;]$(echo $(git rev-parse --short ${GITHUB_SHA}))"
@@ -58,8 +50,12 @@ jobs:
         run: echo "##[set-output name=tagName;]$(echo ${{ steps.extract_branch_commit.outputs.branch }}:${{steps.extract_branch_commit.outputs.commit_id}})"
         id: extract_tag
 
-      - name: log tag
-        run: echo ${{steps.extract_tag.outputs.tagName}}
+      - name: docker build
+        run: docker build . -t ${{steps.extract_tag.outputs.tagName}}
 
-      # - name: docker build
-      #   run: docker build . -t 
+      - name: set-output image id
+        run: "##[set-output name=image_id;]$(echo $(docker images -q --filter ${{steps.extract_tag.outputs.tagName}}))"
+        id: docker_image
+
+      - name: log image id
+        run: echo ${{ steps.docker_image.outputs.image_id }}
