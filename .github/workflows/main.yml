@@ -59,6 +59,7 @@ jobs:
       - name: log test
         env:
           WONG: wong
+        run: echo "set wong"
       - name: test log
         run: echo "WONG:${WONG}"
 
