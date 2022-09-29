@@ -30,20 +30,20 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
       
-      # - name: Set up node
-      #   uses: actions/setup-node@v2-beta
-      #   with: 
-      #       node-version: '14.17'
-      #       cache: "yarn"
+      - name: Set up node
+        uses: actions/setup-node@v2-beta
+        with: 
+            node-version: '14.17'
+            cache: "yarn"
 
-      # - name: yarn install
-      #   run: yarn install
+      - name: yarn install
+        run: yarn install
       
-      # - name: yarn build
-      #   run: yarn build
+      - name: yarn build
+        run: yarn build
 
-      # - name: log dist file
-      #   run: tree ./dist
+      - name: log dist file
+        run: tree ./dist
 
       - name: set-output branch name
         shell: bash
