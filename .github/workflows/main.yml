@@ -13,31 +13,41 @@ jobs:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
+    env:
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_REGISTRY: registry.cn-hangzhou.aliyuncs.com
+      DOCKER_REGISTRY_NAME_SPACE: mc-wong
+      TARGET_TAG: ${DOCKER_REGISTRY}/${DOCKER_REGISTRY_NAME_SPACE}
+
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Run clone
         uses: actions/checkout@v3
 
+      - name: test log
+        run: echo "${TARGET_TAG}kkk"
+
       - name: Set up docker git
         uses: docker/setup-qemu-action@v2
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
       
-      # - name: Set up node
-      #   uses: actions/setup-node@v2-beta
-      #   with: 
-      #       node-version: '14.17'
-      #       cache: "yarn"
+      - name: Set up node
+        uses: actions/setup-node@v2-beta
+        with: 
+            node-version: '14.17'
+            cache: "yarn"
 
-      # - name: yarn install
-      #   run: yarn install
+      - name: yarn install
+        run: yarn install
       
-      # - name: yarn build
-      #   run: yarn build
+      - name: yarn build
+        run: yarn build
 
-      # - name: log dist file
-      #   run: tree ./dist
+      - name: log dist file
+        run: tree ./dist
 
       - name: set-output branch name
         shell: bash
@@ -46,44 +56,24 @@ jobs:
           echo "##[set-output name=commit_id;]$(echo $(git rev-parse --short ${GITHUB_SHA}))"
         id: extract_branch_commit
 
+      - name: set image name
+        env:
+          DOCKER_IMAGE_NAME: ${{ steps.extract_branch_commit.outputs.branch }}:${{steps.extract_branch_commit.outputs.commit_id}}
+        run: echo "##[set-output name=name;]$(echo ${DOCKER_IMAGE_NAME})"
+        id: image
+
       - name: docker build
-        env:
-          MC: ${{ steps.extract_branch_commit.outputs.branch }}:${{steps.extract_branch_commit.outputs.commit_id}}
-        run: |
-          echo ${MC}
-          # docker build . -t ${DOCKER_IMAGE_NAME}
+        run: docker build . -t ${{steps.image.outputs.name}}
 
+      - name: login aliyun docker
+        run: echo "${DOCKER_PASSWORD}" | docker login --username ${DOCKER_USERNAME} --password-stdin ${DOCKER_REGISTRY}
 
+      - name: docker image make tag
+        env: 
+          DOCKER_TAG: ${DOCKER_REGISTRY}/${{steps.image.outputs.name}}
+        run: docker tag ${{ steps.docker_image.outputs.image_id }} ${DOCKER_TAG}
 
-
-      - name: log test
-        env:
-          WONG: wong
-        run: echo "set wong"
-      - name: test log
-        run: echo "WONG:${WONG}"
-
-
-      # - name: login aliyun docker
-      #   env:
-      #     DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-      #     DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-      #     DOCKER_REGISTRY: registry.cn-hangzhou.aliyuncs.com
-      #   run: echo "${DOCKER_PASSWORD}" | docker login --username ${DOCKER_USERNAME} --password-stdin ${DOCKER_REGISTRY}
-
-      - name: log imageid
-        run: |
-          echo "gggg"
-          echo ${{ steps.extract_branch_commit.outputs.branch }}:${{steps.extract_branch_commit.outputs.commit_id}}
-          echo "${MC}hhhhh"
-        #   echo ${{ steps.docker_image.outputs.image_id }}
-
-      # - name: docker image make tag
-      #   env: 
-      #     DOCKER_TAG: ${DOCKER_REGISTRY}/${DOCKER_IMAGE_NAME}
-      #   run: docker tag ${{ steps.docker_image.outputs.image_id }} ${DOCKER_TAG}
-
-      # - name: docker push
-      #   run: docker push ${DOCKER_TAG}
+      - name: docker push
+        run: docker push ${DOCKER_TAG}
 
 
