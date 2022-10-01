@@ -78,8 +78,8 @@ jobs:
     # 依赖build完成之后
     needs: build
     runs-on: ubuntu-latest
-    if:
-      contains('${DEPLOY_BRANCHES}', '${GITHUB_REF#refs/heads}')
+    # if:
+    #   contains('${DEPLOY_BRANCHES}', '${GITHUB_REF#refs/heads}')
       
     steps:
       - name: Run clone
