@@ -63,10 +63,11 @@ jobs:
         env:
           DOCKER_IMAGE_NAME: ${{ steps.extract_branch_commit.outputs.branch }}:${{steps.extract_branch_commit.outputs.commit_id}}
           # docker tag: 项目名称:分支名
-          DOCKER_TAG: ${REPO_NAME}:${{ steps.extract_branch_commit.outputs.branch }}
+          # DOCKER_TAG: ${REPO_NAME}:${{ steps.extract_branch_commit.outputs.branch }}
         run: |
-          docker tag ${DOCKER_IMAGE_NAME} ${DOCKER_REGISTRY}/${DOCKER_REGISTRY_NAME_SPACE}/${DOCKER_TAG}
-          docker push ${DOCKER_REGISTRY}/${DOCKER_REGISTRY_NAME_SPACE}/${DOCKER_TAG}
+          DOCKER_TAG=${REPO_NAME}:${{ steps.extract_branch_commit.outputs.branch }}
+          docker tag ${DOCKER_IMAGE_NAME} ${DOCKER_REGISTRY}/${DOCKER_REGISTRY_NAME_SPACE}/$DOCKER_TAG
+          docker push ${DOCKER_REGISTRY}/${DOCKER_REGISTRY_NAME_SPACE}/$DOCKER_TAG
 
   deploy:
     # 依赖build完成之后
