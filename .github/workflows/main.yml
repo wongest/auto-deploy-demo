@@ -88,4 +88,6 @@ jobs:
           username: ${{ secrets.SERVE_USERNAME }}
           password: ${{ secrets.SERVE_PASSWORD }}
           port: 22
-          script: whoami
+          script: |
+            cd /home
+            mkdir test.js
