@@ -78,7 +78,7 @@ jobs:
     # 依赖build完成之后
     needs: build
     runs-on: ubuntu-latest
-    if: {contains(env.DEPLOY_BRANCHES, github.ref_name)}
+    if: contains(env.DEPLOY_BRANCHES, github.ref_name)
       
     steps:
       - name: Run clone
