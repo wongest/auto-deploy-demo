@@ -78,7 +78,7 @@ jobs:
     # 依赖build完成之后
     needs: build
     runs-on: ubuntu-latest
-    if: contains(' "master" "dev" "feat/20221001_deploy" ', github.ref_name)
+    if: contains(' "master" "dev" "test" ', github.ref_name)
       
     steps:
       - name: ssh docker-compose up
