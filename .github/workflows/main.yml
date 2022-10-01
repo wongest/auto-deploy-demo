@@ -79,7 +79,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     if:
-      ontains('
+      contains('
         refs/heads/dev
         refs/heads/staging
         refs/heads/production
