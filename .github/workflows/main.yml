@@ -79,9 +79,9 @@ jobs:
     runs-on: ubuntu-latest
     if:
       contains('
-        "refs/heads/master"
-        "refs/heads/feat/20221001_deploy"
-      ', github.ref)
+        "master"
+        "feat/20221001_deploy"
+      ', github.ref_name)
       
     steps:
       - name: Run clone
