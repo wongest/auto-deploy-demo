@@ -86,4 +86,4 @@ jobs:
         run: |
           echo ${DEPLOY_BRANCHES}
           echo ${GITHUB_REF#refs/heads/}
-          contains(${DEPLOY_BRANCHES}, ${{GITHUB_REF#refs/heads}})
+          contains('${DEPLOY_BRANCHES}', '${{GITHUB_REF#refs/heads}}')
