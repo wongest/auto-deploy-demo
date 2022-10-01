@@ -82,7 +82,7 @@ jobs:
       contains('
         refs/heads/dev
         refs/heads/staging
-        refs/heads/production
+        refs/heads/feat/20221001_deploy
       ', github.ref)
       
     steps:
