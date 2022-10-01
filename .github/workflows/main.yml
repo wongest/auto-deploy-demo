@@ -49,6 +49,8 @@ jobs:
         run: |
           branch_name=${GITHUB_REF#refs/heads/}  | awk -F '/' '{print $NF}'
           commit_id=$(git rev-parse --short ${GITHUB_SHA})
+          echo branch_name: $branch_name
+          echo commit_id: $commit_id
           echo "##[set-output name=branch;]$(echo $branch_name)" 
           echo "##[set-output name=commit_id;]$(echo $commit_id)"
         id: extract_branch_commit
