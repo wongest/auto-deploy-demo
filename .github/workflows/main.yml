@@ -25,61 +25,62 @@ jobs:
       - name: Run clone
         uses: actions/checkout@v3
 
-      - name: Set up docker git
-        uses: docker/setup-qemu-action@v2
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+      # - name: Set up docker git
+      #   uses: docker/setup-qemu-action@v2
+      # - name: Set up Docker Buildx
+      #   uses: docker/setup-buildx-action@v2
 
-      - name: Set up node
-        uses: actions/setup-node@v2-beta
-        with:
-          node-version: "14.17"
-          cache: "yarn"
+      # - name: Set up node
+      #   uses: actions/setup-node@v2-beta
+      #   with:
+      #     node-version: "14.17"
+      #     cache: "yarn"
 
-      - name: yarn install
-        run: yarn install
+      # - name: yarn install
+      #   run: yarn install
 
-      - name: yarn build
-        run: yarn build
+      # - name: yarn build
+      #   run: yarn build
 
-      - name: log dist file
-        run: tree ./dist
+      # - name: log dist file
+      #   run: tree ./dist
 
-      - name: set-output branch name
-        shell: bash
-        run: |
-          branch_name=$(echo ${GITHUB_REF#refs/heads/}  | awk -F '/' '{print $NF}')
-          commit_id=$(git rev-parse --short ${GITHUB_SHA})
-          echo branch_name: $branch_name
-          echo commit_id: $commit_id
-          echo "##[set-output name=branch;]$branch_name" 
-          echo "##[set-output name=commit_id;]$commit_id"
-        id: extract_branch_commit
+      # - name: set-output branch name
+      #   shell: bash
+      #   run: |
+      #     branch_name=$(echo ${GITHUB_REF#refs/heads/}  | awk -F '/' '{print $NF}')
+      #     commit_id=$(git rev-parse --short ${GITHUB_SHA})
+      #     echo branch_name: $branch_name
+      #     echo commit_id: $commit_id
+      #     echo "##[set-output name=branch;]$branch_name" 
+      #     echo "##[set-output name=commit_id;]$commit_id"
+      #   id: extract_branch_commit
 
-      - name: docker build
-        env:
-          DOCKER_IMAGE_NAME: ${{ steps.extract_branch_commit.outputs.branch }}:${{steps.extract_branch_commit.outputs.commit_id}}
-        run: docker build . -t ${DOCKER_IMAGE_NAME}
+      # - name: docker build
+      #   env:
+      #     DOCKER_IMAGE_NAME: ${{ steps.extract_branch_commit.outputs.branch }}:${{steps.extract_branch_commit.outputs.commit_id}}
+      #   run: docker build . -t ${DOCKER_IMAGE_NAME}
 
-      - name: login aliyun docker
-        run: echo "${DOCKER_PASSWORD}" | docker login --username ${DOCKER_USERNAME} --password-stdin ${DOCKER_REGISTRY}
+      # - name: login aliyun docker
+      #   run: echo "${DOCKER_PASSWORD}" | docker login --username ${DOCKER_USERNAME} --password-stdin ${DOCKER_REGISTRY}
 
-      - name: docker make tag and push
-        env:
-          DOCKER_IMAGE_NAME: ${{ steps.extract_branch_commit.outputs.branch }}:${{steps.extract_branch_commit.outputs.commit_id}}
-        run: |
-          docker_tag=${REPO_NAME}:${{ steps.extract_branch_commit.outputs.branch }}
-          docker_tag_full=${DOCKER_REGISTRY}/${DOCKER_REGISTRY_NAME_SPACE}/$docker_tag
-          echo docker tag: $docker_tag
-          docker tag ${DOCKER_IMAGE_NAME} $docker_tag_full
-          docker push $docker_tag_full
+      # - name: docker make tag and push
+      #   env:
+      #     DOCKER_IMAGE_NAME: ${{ steps.extract_branch_commit.outputs.branch }}:${{steps.extract_branch_commit.outputs.commit_id}}
+      #   run: |
+      #     docker_tag=${REPO_NAME}:${{ steps.extract_branch_commit.outputs.branch }}
+      #     docker_tag_full=${DOCKER_REGISTRY}/${DOCKER_REGISTRY_NAME_SPACE}/$docker_tag
+      #     echo docker tag: $docker_tag
+      #     docker tag ${DOCKER_IMAGE_NAME} $docker_tag_full
+      #     docker push $docker_tag_full
 
   deploy:
     # 依赖build完成之后
     needs: build
     runs-on: ubuntu-latest
-    env:
-      ONLY_BRANCH: master
+    if:
+      contains(${DEPLOY_BRANCHES}, ${GITHUB_REF#refs/heads/})
+      
     steps:
       - name: Run clone
         run: |
