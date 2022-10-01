@@ -79,7 +79,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     if:
-      contains('${DEPLOY_BRANCHES}', '${{GITHUB_REF#refs/heads}}')
+      contains('master feat/20221001_deploy', feat/20221001_deploy)
       
     steps:
       - name: Run clone
