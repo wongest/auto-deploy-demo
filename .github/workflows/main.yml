@@ -79,11 +79,11 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     if:
-      contains('${DEPLOY_BRANCHES}', '${GITHUB_REF#refs/heads/}')
+      contains('${DEPLOY_BRANCHES}', '${GITHUB_REF#refs/heads}')
       
     steps:
       - name: Run clone
         run: |
           echo depoly
           echo ${GITHUB_REF#refs/heads/}
-          # echo contains('${DEPLOY_BRANCHES}', '${GITHUB_REF#refs/heads/}')
+          echo ${GITHUB_REF#refs/heads/}
