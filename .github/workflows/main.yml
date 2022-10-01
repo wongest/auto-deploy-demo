@@ -90,5 +90,5 @@ jobs:
           port: 22
           script: |
             cd /home/compose
-            docker-compose -d ./docker-compose.yaml pull
-            docker-compose -d ./docker-compose.yaml up -d
+            docker-compose -f ./docker-compose.yaml pull
+            docker-compose -f ./docker-compose.yaml up -d
