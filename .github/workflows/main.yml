@@ -11,7 +11,6 @@ env:
   DOCKER_REGISTRY: registry.cn-hangzhou.aliyuncs.com
   DOCKER_REGISTRY_NAME_SPACE: mc-wong
   REPO_NAME: auto-deploy-demo
-  DEPLOY_BRANCHES: ("refs/heads/master" "refs/heads/feat/20221001_deploy")
   
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -79,10 +78,13 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     if:
-      contains(${DEPLOY_BRANCHES}, github.ref)
+      contains('
+        "refs/heads/master"
+        "refs/heads/feat/20221001_deploy"
+      ', github.ref)
       
     steps:
       - name: Run clone
         run: |
           echo ${DEPLOY_BRANCHES}
-          echo ${GITHUB_REF#refs/heads/}
+          echo ${{github}}
