@@ -6,7 +6,7 @@ services:
       - 8000:80
 
   ui-test:
-    image: registry.cn-hangzhou.aliyuncs.com/mc-wong/auto-deploy-demo:dev
+    image: registry.cn-hangzhou.aliyuncs.com/mc-wong/auto-deploy-demo:test
     ports:
       - 8008:80
 
