@@ -10,6 +10,7 @@ env:
   DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
   DOCKER_REGISTRY: registry.cn-hangzhou.aliyuncs.com
   DOCKER_REGISTRY_NAME_SPACE: mc-wong
+  REPO_NAME: auto-deploy-demo
   
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -58,17 +59,21 @@ jobs:
       - name: login aliyun docker
         run: echo "${DOCKER_PASSWORD}" | docker login --username ${DOCKER_USERNAME} --password-stdin ${DOCKER_REGISTRY}
 
-      - name: docker image make tag
+      - name: docker make tag and push
         env:
           DOCKER_IMAGE_NAME: ${{ steps.extract_branch_commit.outputs.branch }}:${{steps.extract_branch_commit.outputs.commit_id}}
-          DOCKER_TAG: ${{ steps.extract_branch_commit.outputs.branch }}
+          # docker tag: 项目名称:分支名
+          DOCKER_TAG: ${REPO_NAME}:${{ steps.extract_branch_commit.outputs.branch }}
         run: |
           docker tag ${DOCKER_IMAGE_NAME} ${DOCKER_REGISTRY}/${DOCKER_REGISTRY_NAME_SPACE}/${DOCKER_TAG}
           docker push ${DOCKER_REGISTRY}/${DOCKER_REGISTRY_NAME_SPACE}/${DOCKER_TAG}
 
   deploy:
+    # 依赖build完成之后
     needs: build
     runs-on: ubuntu-latest
+    env:
+      ONLY_BRANCHER: master
     steps:
       - name: Run clone
         run: echo depoly
