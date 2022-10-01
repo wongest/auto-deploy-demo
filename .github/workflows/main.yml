@@ -83,8 +83,7 @@ jobs:
         refs/heads/dev
         refs/heads/staging
         refs/heads/feat/20221001_deploy
-        feat/20221001_deploy
-      ', github.refs/heads/)
+      ', GITHUB_REF#refs/heads/)
       
     steps:
       - name: Run clone
