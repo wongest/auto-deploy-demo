@@ -1,0 +1,16 @@
+version: '3'
+services:
+  ui-master:
+    image: registry.cn-hangzhou.aliyuncs.com/mc-wong/auto-deploy-demo:master
+    ports:
+      - 8000:80
+
+  ui-test:
+    image: registry.cn-hangzhou.aliyuncs.com/mc-wong/auto-deploy-demo:dev
+    ports:
+      - 8008:80
+
+  ui-dev:
+    image: registry.cn-hangzhou.aliyuncs.com/mc-wong/auto-deploy-demo:dev
+    ports:
+      - 8009:80
