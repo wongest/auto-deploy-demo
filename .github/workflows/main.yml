@@ -5,20 +5,20 @@ name: vue-CI
 # Controls when the workflow will run
 on: ["push", "pull_request"]
 
-
+env:
+  DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+  DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+  DOCKER_REGISTRY: registry.cn-hangzhou.aliyuncs.com
+  DOCKER_REGISTRY_NAME_SPACE: mc-wong
+  REPO_NAME: auto-deploy-demo
+  DEPLOY_BRANCHES: ("master" "feat/20221001_deploy")
+  
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
   build:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-
-    env:
-      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-      DOCKER_REGISTRY: registry.cn-hangzhou.aliyuncs.com
-      DOCKER_REGISTRY_NAME_SPACE: mc-wong
-
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -29,16 +29,16 @@ jobs:
         uses: docker/setup-qemu-action@v2
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
-      
+
       - name: Set up node
         uses: actions/setup-node@v2-beta
-        with: 
-            node-version: '14.17'
-            cache: "yarn"
+        with:
+          node-version: "14.17"
+          cache: "yarn"
 
       - name: yarn install
         run: yarn install
-      
+
       - name: yarn build
         run: yarn build
 
@@ -48,28 +48,47 @@ jobs:
       - name: set-output branch name
         shell: bash
         run: |
-          echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/}  | awk -F '/' '{print $NF}')" 
-          echo "##[set-output name=commit_id;]$(echo $(git rev-parse --short ${GITHUB_SHA}))"
+          branch_name=$(echo ${GITHUB_REF#refs/heads/}  | awk -F '/' '{print $NF}')
+          commit_id=$(git rev-parse --short ${GITHUB_SHA})
+          echo branch_name: $branch_name
+          echo commit_id: $commit_id
+          echo "##[set-output name=branch;]$branch_name" 
+          echo "##[set-output name=commit_id;]$commit_id"
         id: extract_branch_commit
 
-      - name: set image name
+      - name: docker build
         env:
           DOCKER_IMAGE_NAME: ${{ steps.extract_branch_commit.outputs.branch }}:${{steps.extract_branch_commit.outputs.commit_id}}
-        run: echo "##[set-output name=name;]$(echo ${DOCKER_IMAGE_NAME})"
-        id: image
-
-      - name: docker build
-        run: docker build . -t ${{steps.image.outputs.name}}
+        run: docker build . -t ${DOCKER_IMAGE_NAME}
 
       - name: login aliyun docker
         run: echo "${DOCKER_PASSWORD}" | docker login --username ${DOCKER_USERNAME} --password-stdin ${DOCKER_REGISTRY}
 
-      - name: docker image make tag
+      - name: docker make tag and push
         env:
           DOCKER_IMAGE_NAME: ${{ steps.extract_branch_commit.outputs.branch }}:${{steps.extract_branch_commit.outputs.commit_id}}
         run: |
-          docker tag ${DOCKER_IMAGE_NAME} ${DOCKER_REGISTRY}/${DOCKER_REGISTRY_NAME_SPACE}/${{steps.image.outputs.name}}
-          docker push ${DOCKER_REGISTRY}/${DOCKER_REGISTRY_NAME_SPACE}/${{steps.image.outputs.name}}
+          docker_tag=${REPO_NAME}:${{ steps.extract_branch_commit.outputs.branch }}
+          docker_tag_full=${DOCKER_REGISTRY}/${DOCKER_REGISTRY_NAME_SPACE}/$docker_tag
+          echo docker tag: $docker_tag
+          docker tag ${DOCKER_IMAGE_NAME} $docker_tag_full
+          docker push $docker_tag_full
 
-
-
+  deploy:
+    # 依赖build完成之后
+    needs: build
+    runs-on: ubuntu-latest
+    if: contains(' "master" "dev" "feat/20221001_deploy" ', github.ref_name)
+      
+    steps:
+      - name: ssh docker-compose up
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVE_HOST }}
+          username: ${{ secrets.SERVE_USERNAME }}
+          password: ${{ secrets.SERVE_PASSWORD }}
+          port: 22
+          script: |
+            cd /home/compose
+            docker-compose -f ./docker-compose.yaml pull
+            docker-compose -f ./docker-compose.yaml up -d
