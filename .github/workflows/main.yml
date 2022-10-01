@@ -78,12 +78,14 @@ jobs:
     # 依赖build完成之后
     needs: build
     runs-on: ubuntu-latest
+    env:
+      CURRENT_BRANCH: ${GITHUB_REF#refs/heads/}
     if:
       contains('
         refs/heads/dev
         refs/heads/staging
         refs/heads/feat/20221001_deploy
-      ', $(echo ${GITHUB_REF#refs/heads/}))
+      ', ${CURRENT_BRANCH})
       
     steps:
       - name: Run clone
