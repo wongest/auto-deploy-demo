@@ -87,4 +87,4 @@ jobs:
       - name: Run clone
         run: |
           echo ${DEPLOY_BRANCHES}
-          echo ${{github}}
+          echo ${{github.ref_name}}
