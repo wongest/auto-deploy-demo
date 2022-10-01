@@ -86,4 +86,4 @@ jobs:
         run: |
           echo depoly
           echo ${GITHUB_REF#refs/heads/}
-          echo $(contains('${DEPLOY_BRANCHES}', '${GITHUB_REF#refs/heads}'))
+          echo $(contains(${DEPLOY_BRANCHES}, ${GITHUB_REF#refs/heads}))
