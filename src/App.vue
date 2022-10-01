@@ -1,7 +1,7 @@
 <template>
   <div>
     <ul>
-      <li>2022-10-01</li>
+      <li>2022-10-01 10:01</li>
     </ul>
   </div>
 </template>
