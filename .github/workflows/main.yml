@@ -36,16 +36,6 @@ jobs:
           node-version: "14.17"
           cache: "yarn"
 
-      - name: install envsub
-        run: npm install envsub -g
-
-      - name: log env
-        run: |
-          echo $REPO_NAME
-          envsub -d -a -s dollar-curly nginx.template.conf nginx.conf
-          ls
-
-
       # - name: yarn install
       #   run: yarn install
 
@@ -55,16 +45,25 @@ jobs:
       # - name: log dist file
       #   run: tree ./dist
 
-      # - name: set-output branch name
-      #   shell: bash
-      #   run: |
-      #     branch_name=$(echo ${GITHUB_REF#refs/heads/}  | awk -F '/' '{print $NF}')
-      #     commit_id=$(git rev-parse --short ${GITHUB_SHA})
-      #     echo branch_name: $branch_name
-      #     echo commit_id: $commit_id
-      #     echo "##[set-output name=branch;]$branch_name" 
-      #     echo "##[set-output name=commit_id;]$commit_id"
-      #   id: extract_branch_commit
+      - name: set-output branch name
+        run: |
+          branch_name=$(echo ${GITHUB_REF#refs/heads/}  | awk -F '/' '{print $NF}')
+          commit_id=$(git rev-parse --short ${GITHUB_SHA})
+          echo branch_name: $branch_name
+          echo commit_id: $commit_id
+          echo "##[set-output name=branch;]$branch_name" 
+          echo "##[set-output name=commit_id;]$commit_id"
+        id: extract_branch_commit
+
+      - name: install envsub
+        run: npm install envsub -g
+
+      - name: set nginx version
+        DOCKER_IMAGE_NAME: ${{ steps.extract_branch_commit.outputs.branch }}:${{steps.extract_branch_commit.outputs.commit_id}}
+        run: |
+          echo $REPO_NAME
+          envsub -d -a -s dollar-curly nginx.template.conf nginx.conf
+          ls
 
       # - name: docker build
       #   env:
