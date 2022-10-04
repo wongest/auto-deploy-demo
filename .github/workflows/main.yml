@@ -66,39 +66,39 @@ jobs:
           envsub -d -a -s dollar-curly nginx.template.conf nginx.conf
           ls
 
-      # - name: docker build
-      #   env:
-      #     DOCKER_IMAGE_NAME: ${{ steps.extract_branch_commit.outputs.branch }}:${{steps.extract_branch_commit.outputs.commit_id}}
-      #   run: docker build . -t ${DOCKER_IMAGE_NAME}
+      - name: docker build
+        env:
+          DOCKER_IMAGE_NAME: ${{ steps.extract_branch_commit.outputs.branch }}:${{steps.extract_branch_commit.outputs.commit_id}}
+        run: docker build . -t ${DOCKER_IMAGE_NAME}
 
-      # - name: login aliyun docker
-      #   run: echo "${DOCKER_PASSWORD}" | docker login --username ${DOCKER_USERNAME} --password-stdin ${DOCKER_REGISTRY}
+      - name: login aliyun docker
+        run: echo "${DOCKER_PASSWORD}" | docker login --username ${DOCKER_USERNAME} --password-stdin ${DOCKER_REGISTRY}
 
-      # - name: docker make tag and push
-      #   env:
-      #     DOCKER_IMAGE_NAME: ${{ steps.extract_branch_commit.outputs.branch }}:${{steps.extract_branch_commit.outputs.commit_id}}
-      #   run: |
-      #     docker_tag=${REPO_NAME}:${{ steps.extract_branch_commit.outputs.branch }}
-      #     docker_tag_full=${DOCKER_REGISTRY}/${DOCKER_REGISTRY_NAME_SPACE}/$docker_tag
-      #     echo docker tag: $docker_tag
-      #     docker tag ${DOCKER_IMAGE_NAME} $docker_tag_full
-      #     docker push $docker_tag_full
+      - name: docker make tag and push
+        env:
+          DOCKER_IMAGE_NAME: ${{ steps.extract_branch_commit.outputs.branch }}:${{steps.extract_branch_commit.outputs.commit_id}}
+        run: |
+          docker_tag=${REPO_NAME}:${{ steps.extract_branch_commit.outputs.branch }}
+          docker_tag_full=${DOCKER_REGISTRY}/${DOCKER_REGISTRY_NAME_SPACE}/$docker_tag
+          echo docker tag: $docker_tag
+          docker tag ${DOCKER_IMAGE_NAME} $docker_tag_full
+          docker push $docker_tag_full
 
-  # deploy:
-  #   # 依赖build完成之后
-  #   needs: build
-  #   runs-on: ubuntu-latest
-  #   if: contains(' "master" "dev" "test" ', github.ref_name)
+  deploy:
+    # 依赖build完成之后
+    needs: build
+    runs-on: ubuntu-latest
+    if: contains(' "master" "dev" "test" ', github.ref_name)
       
-  #   steps:
-  #     - name: ssh docker-compose up
-  #       uses: appleboy/ssh-action@master
-  #       with:
-  #         host: ${{ secrets.SERVE_HOST }}
-  #         username: ${{ secrets.SERVE_USERNAME }}
-  #         password: ${{ secrets.SERVE_PASSWORD }}
-  #         port: 22
-  #         script: |
-  #           cd /home/compose
-  #           docker-compose -f ./docker-compose.yaml pull
-  #           docker-compose -f ./docker-compose.yaml up -d
+    steps:
+      - name: ssh docker-compose up
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVE_HOST }}
+          username: ${{ secrets.SERVE_USERNAME }}
+          password: ${{ secrets.SERVE_PASSWORD }}
+          port: 22
+          script: |
+            cd /home/compose
+            docker-compose -f ./docker-compose.yaml pull
+            docker-compose -f ./docker-compose.yaml up -d

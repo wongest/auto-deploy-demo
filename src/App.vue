@@ -3,13 +3,18 @@
     <ul>
       <li>2022-10-01 10:01</li>
     </ul>
+    <div></div>
+    <Footer />
   </div>
 </template>
 
 <script>
-
+import Footer from './components/Footer.vue'
 export default {
   name: 'App',
+  components: {
+    Footer
+  }
 }
 </script>
 
