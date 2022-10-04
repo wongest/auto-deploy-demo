@@ -46,7 +46,6 @@ jobs:
         run: tree ./dist
 
       - name: set-output branch name
-        shell: bash
         run: |
           branch_name=$(echo ${GITHUB_REF#refs/heads/}  | awk -F '/' '{print $NF}')
           commit_id=$(git rev-parse --short ${GITHUB_SHA})
@@ -55,6 +54,17 @@ jobs:
           echo "##[set-output name=branch;]$branch_name" 
           echo "##[set-output name=commit_id;]$commit_id"
         id: extract_branch_commit
+
+      - name: install envsub
+        run: npm install envsub -g
+
+      - name: set nginx version
+        env:
+          DOCKER_IMAGE_NAME: ${{ steps.extract_branch_commit.outputs.branch }}:${{steps.extract_branch_commit.outputs.commit_id}}
+        run: |
+          echo $REPO_NAME
+          envsub -d -a -s dollar-curly conf/nginx.template.conf conf/nginx.conf
+          ls
 
       - name: docker build
         env:
