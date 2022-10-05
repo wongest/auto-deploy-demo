@@ -1,6 +1,6 @@
 
 # auto-depoly-demo
-* 一个前端自动h部署的demo
+* 一个前端自动化部署的demo
 * 技术栈:
     * github action
     * docker
