@@ -22,4 +22,4 @@
 5. 根据分支，若当前分支为**部署分支**，就会在远程服务器更新**docker container**
 
 ## 后续优化
-* 可以在前端页面区分环境（分支）https://github.com/wongest/auto-deploy-demo/issues/4
+* 【已完成】可以在前端页面区分环境（分支）https://github.com/wongest/auto-deploy-demo/issues/4
